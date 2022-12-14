@@ -132,7 +132,7 @@ function sendTextMessage(message,to) {
 // compose and send a video message to whatsapp
 function sendVideoMessage(videoUrl, caption, to){
   vonage.messages.send(
-	  new Video({ url: videoUrl, caption:caption }, to, WHATSAPP_NUMBER)
+	  new Video({ url: videoUrl, caption:caption }, to, whatsappNumber)
   )
 	  .then(resp => console.log(resp.message_uuid))
 	  .catch(err => console.error(err));
