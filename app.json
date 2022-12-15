@@ -7,12 +7,6 @@
         "Whatsapp",
         "Teneo"
     ],
-    "repository": "https://github.com/lsacera/tie-api-example-vonage-whatsapp",
-    "env": {    
-        "TENEO_ENGINE_URL": {
-            "description": "Please input your Teneo Engine URL. https://some.engine/instance/",
-            "required":true
-        }
-        
+    "repository": "https://github.com/lsacera/tie-api-example-vonage-whatsapp"
     }
 }
