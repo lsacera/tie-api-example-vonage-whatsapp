@@ -27,7 +27,8 @@ const { Vonage } = require('@vonage/server-sdk')
 const { Text } = require('@vonage/messages/dist/classes/WhatsApp/Text');
 const { Image } = require('@vonage/messages/dist/classes/WhatsApp/Image');
 const { Video } = require('@vonage/messages/dist/classes/WhatsApp/Video');
-
+const { CustomMessage } = require('@vonage/messages/dist/classes/WhatsApp/CustomMessage');
+const { File } = require('@vonage/messages/dist/classes/WhatsApp/File');
 
 const port = process.env.PORT || 4338;
 const teneoEngineUrl = process.env.TENEO_ENGINE_URL;
@@ -100,6 +101,13 @@ function handleVonageMessages(sessionHandler) {
             sendVideoMessage(teneoResponse.output.parameters.videoUrl,teneoResponse.output.text,from);
             text_sent=true;
             break;
+          case "fileUrl":
+            sendFile(teneoResponse.output.parameters.fileUrl,teneoResponse.output.text,from);
+            text_sent=true;
+            break;
+          case "longitude": //I suppose that if longitude comes in, then latitude, name and address should come too!!
+            sendLocation(teneoResponse.output.parameters.longitude, teneoResponse.output.parameters.latitude, teneoResponse.output.parameters.name, teneoResponse.output.parameters.address, from);
+            text_sent=false;
           default:
             break;  
         }//end switch
@@ -108,10 +116,10 @@ function handleVonageMessages(sessionHandler) {
     }//end if
 
     if (!text_sent){
-      sendTextMessage(teneoResponse.output.text,from); //here from turns into to
+      sendTextMessage(teneoResponse.output.text,from); //here 'from' turns into 'to'
     }
 
-    //end of call
+        //end of call to this connector
     res.end(teneoResponse.output.text); 
   }//end return async
 }//end function
@@ -145,6 +153,36 @@ function sendImageMessage(imageUrl, caption, to){
   )
     .then(resp => console.log(resp.message_uuid))
     .catch(err => console.error(err));
+}
+
+// compose and send a location
+function sendLocation(longitude, latitude, name, address, to){
+vonage.messages.send(
+	new CustomMessage(
+		{
+			type: 'location',
+			location: {
+				longitude: longitude,
+				latitude: latitude,
+				name: name,
+				address: address
+			},
+		},
+		to,
+		whatsappNumber
+	)
+)    
+    .then(resp => console.log(resp.message_uuid))
+    .catch(err => console.error(err));
+}
+
+// compose and send a file
+function sendFile(fileUrl, caption, to){
+  vonage.messages.send(
+	  new File({ url: fileUrl, caption:caption }, to, whatsappNumber)
+  )
+	  .then(resp => console.log(resp.message_uuid))
+	  .catch(err => console.error(err));
 }
 
 
