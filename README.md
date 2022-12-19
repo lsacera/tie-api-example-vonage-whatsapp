@@ -3,10 +3,25 @@ This node.js example connector allows you to make your Teneo bot available on Wh
 
 ## Prerequisites
 ### Https
-Making the connector available via https is preferred. Ngrok is recommended for this.
+Making the connector available via https is preferred. Ngrok is recommended for this, tough you can publish the connector as you wish but remember to have it internet-reachable.
 
 ### Teneo Engine
 Your bot needs to be published and you need to know the engine url.
+
+## Supported messages
+This connector is provided "as is" (as an example, no warranty) and several types of messages. This section explains the types of messages and the configuration needed in Teneo to support them.
+### Text
+Any text message sent by your Bot Engine in Teneo will be sent to whatsapp.
+### Image
+To send an image from Teneo, create a new output parameter and type 'imageUrl' as its name and the URL pointing to the actual image file as the value of the output parameter. The text used as response in the Output node of Teneo will be as the image caption.
+### Video
+To send a video from Teneo, create a new output parameter and type 'videoUrl' as its name and the URL pointing to the actual video file as the value of the output parameter. The text used as response in the Output node of Teneo will be the video caption.
+### File
+To send a file from Teneo, create a new output parameter and type 'fileUrl' as its name and the URL pointing to the actual video file as the value of the output parameter. The text used as response in the Output node of Teneo will be the video caption.
+### Location
+To send a location from Teneo, you will need the following output parameters (all of them) with the appropiate value: **longitude** with the longitude as value, **latitude** with the actual latitude as value, **name** wih the name of the location as value and **address** with the address of the location.
+
+To change this behaviour and/or create your own types of messages, please refer to the [Vonage API for WhatsApp](https://developer.vonage.com/messages/overview) and see examples at [Vonage Code Snippets](https://github.com/Vonage/vonage-node-code-snippets/tree/master/messages/whatsapp).
 
 ## Setup instructions
 ### Download, install and start connector
