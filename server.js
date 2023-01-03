@@ -29,7 +29,10 @@ const { Image } = require('@vonage/messages/dist/classes/WhatsApp/Image');
 const { Video } = require('@vonage/messages/dist/classes/WhatsApp/Video');
 const { CustomMessage } = require('@vonage/messages/dist/classes/WhatsApp/CustomMessage');
 const { File } = require('@vonage/messages/dist/classes/WhatsApp/File');
+const { Audio } = require('@vonage/messages/dist/classes/WhatsApp/Audio');
+const { TemplateMessage } = require('@vonage/messages/dist/classes/WhatsApp/TemplateMessage');
 
+//Initialization parameters, from the env file
 const port = process.env.PORT || 4338;
 const teneoEngineUrl = process.env.TENEO_ENGINE_URL;
 const vonageApiKey = process.env.VONAGE_API_KEY;
@@ -38,6 +41,9 @@ const vonageAppId = process.env.VONAGE_APP_ID;
 const vonageServer = process.env.VONAGE_SERVER_URL;
 const vonagePrivateKeyPath = process.env.VONAGE_PRIVATE_KEY_FILE_PATH
 const whatsappNumber=process.env.WHATSAPP_NUMBER;
+const whatsappTemplateNameSpace = process.env.WHATSAPP_TEMPLATE_NAMESPACE;
+const whatsappTemplateName = process.env.WHATSAPP_TEMPLATE_NAME;
+
 
 const app = express();
 
@@ -108,6 +114,10 @@ function handleVonageMessages(sessionHandler) {
           case "longitude": //I suppose that if longitude comes in, then latitude, name and address should come too!!
             sendLocation(teneoResponse.output.parameters.longitude, teneoResponse.output.parameters.latitude, teneoResponse.output.parameters.name, teneoResponse.output.parameters.address, from);
             text_sent=false;
+            break;
+          case "audioUrl":
+            sendAudio(teneoResponse.output.parameters.audioUrl, from);
+            text_sent=false;
           default:
             break;  
         }//end switch
@@ -115,6 +125,7 @@ function handleVonageMessages(sessionHandler) {
       }//end for
     }//end if
 
+    //If I did not send any text, I send the Teneo text now
     if (!text_sent){
       sendTextMessage(teneoResponse.output.text,from); //here 'from' turns into 'to'
     }
@@ -184,6 +195,16 @@ function sendFile(fileUrl, caption, to){
 	  .then(resp => console.log(resp.message_uuid))
 	  .catch(err => console.error(err));
 }
+
+//compose and send audio 
+function sendAudio(audioUrl, to){
+  vonage.messages.send(
+	  new Audio({ url: audioUrl}, to, whatsappNumber)
+  )
+	  .then(resp => console.log(resp.message_uuid))
+	  .catch(err => console.error(err));
+}
+
 
 
 /***

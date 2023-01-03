@@ -20,6 +20,8 @@ To send a video from Teneo, create a new output parameter and type 'videoUrl' as
 To send a file from Teneo, create a new output parameter and type 'fileUrl' as its name and the URL pointing to the actual video file as the value of the output parameter. The text used as response in the Output node of Teneo will be the video caption.
 ### Location
 To send a location from Teneo, you will need the following output parameters (all of them) with the appropiate value: **longitude** with the longitude as value, **latitude** with the actual latitude as value, **name** wih the name of the location as value and **address** with the address of the location.
+### Audio
+To send an audio file, reate a new output parameter and use 'audioUrl' as its name and the URL pointing to the actual audio file as the value of the output parameter. The text used in the output parameter is not relevant for this kind of message.
 
 To change this behaviour and/or create your own types of messages, please refer to the [Vonage API for WhatsApp](https://developer.vonage.com/messages/overview) and see examples at [Vonage Code Snippets](https://github.com/Vonage/vonage-node-code-snippets/tree/master/messages/whatsapp).
 
