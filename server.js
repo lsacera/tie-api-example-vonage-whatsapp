@@ -193,7 +193,7 @@ function sendDirectMessage() {
     }
 
         //end of call to this connector
-    res.end(teneoResponse.output.text); 
+    res.end(text); 
   }//end return async
 }//end sendDirectMessage
 
