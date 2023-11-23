@@ -147,7 +147,7 @@ function sendDirectMessage() {
 
     // get message from user
     const text = req.body.text;
-    console.log(`sendMessage.userInput: ${userInput}`);
+    console.log(`sendMessage.userInput: ${text}`);
 
     // get additional parameters, in a parameter object
     const parameters = req.body.parameters;
