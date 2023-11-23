@@ -70,6 +70,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // vonage message comes in, this is TESTING
 app.post("/", handleVonageMessages(sessionHandler));
 
+// another endpoint to test messages directly to whatsapp through vonage
+app.post("/sendMessage", sendDirectMessage());
+
 //handle vonage incoming message (this is the http post endpoint function)
 function handleVonageMessages(sessionHandler) {
   return async (req, res) => {
@@ -133,8 +136,72 @@ function handleVonageMessages(sessionHandler) {
         //end of call to this connector
     res.end(teneoResponse.output.text); 
   }//end return async
-}//end function
+}//end handleVonageMessages
 
+
+function sendDirectMessage() {
+  return async (req, res) => {
+    // get the sender's phone number
+    const from = req.body.from;
+    console.log(`sendMessage.from: ${from}`);
+
+    // get message from user
+    const text = req.body.text;
+    console.log(`sendMessage.userInput: ${userInput}`);
+
+    // get additional parameters, in a parameter object
+    const parameters = req.body.parameters;
+    console.log(`sendMessage.parameters: ${parameters}`);
+
+    //write messages to whatsapp 
+    res.writeHead(200, { 'Content-Type': 'text/xml' });
+    
+    var text_sent = false; //variable to control if we sent Teneo response as long with images or videos 
+    //check if we have teneo parameters (image, video, etc) and process them  
+    if((parameters != null) && (Object.keys(parameters).length > 0)){
+        for (var m in parameters){  
+        switch (m){
+          case "imageUrl":
+            sendImageMessage(parameters.imageUrl,text,from);
+            text_sent=true;
+            break;
+          case "videoUrl":
+            sendVideoMessage(parameters.videoUrl,text,from);
+            text_sent=true;
+            break;
+          case "fileUrl":
+            sendFile(parameters.fileUrl,text,from);
+            text_sent=true;
+            break;
+          case "longitude": //I suppose that if longitude comes in, then latitude, name and address should come too!!
+            sendLocation(parameters.longitude, parameters.latitude, parameters.name, parameters.address, from);
+            text_sent=false;
+            break;
+          case "audioUrl":
+            sendAudio(teneoResponse.output.parameters.audioUrl, from);
+            text_sent=false;
+          default:
+            break;  
+        }//end switch
+        
+      }//end for
+    }//end if
+
+    //If I did not send any text, I send the Teneo text now
+    if (!text_sent){
+      sendTextMessage(text,from); //here 'from' turns into 'to'
+    }
+
+        //end of call to this connector
+    res.end(teneoResponse.output.text); 
+  }//end return async
+}//end sendDirectMessage
+
+
+
+//
+// HELPER functions
+//
 // compose and send a text message to whatsapp
 function sendTextMessage(message,to) {
   vonage.messages.send(
